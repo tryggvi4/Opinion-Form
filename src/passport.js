@@ -12,15 +12,16 @@
  * The database schema used in this sample is available at
  * https://github.com/membership/membership.db/tree/master/postgres
  */
-
+/*
 import passport from 'passport';
 import { Strategy as FacebookStrategy } from 'passport-facebook';
-import { User, UserLogin, UserClaim, UserProfile } from './data/models';
 import config from './config';
 
 /**
  * Sign in with Facebook.
  */
+
+/*
 passport.use(
   new FacebookStrategy(
     {
@@ -39,6 +40,7 @@ passport.use(
     },
     (req, accessToken, refreshToken, profile, done) => {
       /* eslint-disable no-underscore-dangle */
+/*
       const loginName = 'facebook';
       const claimType = 'urn:facebook:access_token';
       const fooBar = async () => {
@@ -140,4 +142,4 @@ passport.use(
   ),
 );
 
-export default passport;
+export default passport; */

@@ -4,18 +4,19 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
-import QuestionType from '../types/QuestionType';
-// import sequelize from '../sequelize';
+import { db } from '../database';
 
-const questions = {
-  type: QuestionType,
-  resolve() {
-    return 'virkar þetta';
-
-    // request.question && {
-    // qID: request.question.qID,
-    // questiontext: request.question.questiontext,
-  },
-};
+const questions = () =>
+  new Promise((resolve, reject) => {
+    db.get('SELECT * from Questions;', (err, rows) => {
+      if (err) {
+        console.error(err);
+        reject(err);
+      } else {
+        // console.log(rows);
+        resolve(rows);
+      }
+    });
+  });
 
 export default questions;

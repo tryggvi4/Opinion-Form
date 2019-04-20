@@ -5,18 +5,19 @@
  */
 
 import {
-  GraphQLObjectType as ObjectType,
+  GraphQLObjectType,
   //  GraphQLID as ID,
-  GraphQLString as StringType,
+  GraphQLString,
   //  GraphQLNonNull as NonNull,
-  GraphQLInt as IntegerType,
+  GraphQLInt,
 } from 'graphql';
 
-const QuestionType = new ObjectType({
+const QuestionType = new GraphQLObjectType({
   name: 'Question',
   fields: {
-    sID: { type: IntegerType },
-    questiontext: { type: StringType },
+    qID: { type: GraphQLInt },
+    sID: { type: GraphQLInt },
+    questionText: { type: GraphQLString },
   },
 });
 

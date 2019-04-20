@@ -7,22 +7,20 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
-import {
-  GraphQLSchema as Schema,
-  GraphQLObjectType as ObjectType,
-} from 'graphql';
+import { GraphQLSchema, GraphQLObjectType } from 'graphql';
 
-import me from './queries/me';
-import news from './queries/news';
+import QuestionType from './types/QuestionType';
+
 import questions from './queries/questions';
 
-const schema = new Schema({
-  query: new ObjectType({
-    name: 'Query',
+const schema = new GraphQLSchema({
+  query: new GraphQLObjectType({
+    name: 'RootQueryType',
     fields: {
-      me,
-      news,
-      questions,
+      questions: {
+        type: QuestionType,
+        resolve: questions,
+      },
     },
   }),
 });
