@@ -7,26 +7,39 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 import React from 'react';
+import PropTypes from 'prop-types';
 // import withStyles from 'isomorphic-style-loader/lib/withStyles';
-// import PropTypes from 'prop-types';
 // import withStyles from 'isomorphic-style-loader/lib/withStyles';
-// import s from './Home.css';
+import s from './Home.css';
 
 class Home extends React.Component {
   static propTypes = {
-    // questions: PropTypes.object,
-    // questions: PropTypes.oneOfType(
-    //   PropTypes.shape({
-    //     qID: PropTypes.string.isRequired,
-    //     sID: PropTypes.string.isRequired,
-    //     questionText: PropTypes.string,
-    //   })
-    // ).isRequired,
+    surveys: PropTypes.arrayOf(
+      PropTypes.shape({
+        name: PropTypes.string.isRequired,
+        questions: PropTypes.string.isRequired,
+        map: PropTypes.object,
+      }),
+    ).isRequired,
   };
 
   render() {
     // console.log(this.props);
-    return <h1>Hello World</h1>;
+    return (
+      <div className={s.root}>
+        <div className={s.container}>
+          <h1>{this.props.surveys.name}</h1>
+          {this.props.surveys.questions.map(item => (
+            <div>
+              <h2>{item.questionText}</h2>
+              {item.options.map(item1 => (
+                <h3>{item1.optionText}</h3>
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
+    );
   }
 }
 

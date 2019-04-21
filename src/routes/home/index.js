@@ -14,18 +14,18 @@ import Layout from '../../components/Layout';
 async function action({ fetch }) {
   const resp = await fetch('/graphql', {
     body: JSON.stringify({
-      query: '{questions {qID,sID,questionText}}',
+      query:
+        '{surveys(id:"1"){name,questions{questionText,options{optionText}}}}',
     }),
   });
   const { data } = await resp.json();
-  if (!data) throw new Error('Failed to load the news feed.');
-  // console.log(data);
+  if (!data || !data.surveys) throw new Error('Failed to load the Survey.');
   return {
     title: 'React Starter Kit',
     chunks: ['home'],
     component: (
       <Layout>
-        <Home questions={data.questions} />
+        <Home surveys={data.surveys} />
       </Layout>
     ),
   };
