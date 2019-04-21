@@ -7,25 +7,24 @@
 import {
   GraphQLObjectType,
   GraphQLString,
-  GraphQLList,
   GraphQLInt,
+  GraphQLList,
 } from 'graphql';
-import OptionType from './OptionType';
+import QuestionType from './QuestionType';
 import { db } from '../database';
 
-const QuestionType = new GraphQLObjectType({
-  name: 'Question',
+const SurveyType = new GraphQLObjectType({
+  name: 'Survey',
   fields: {
-    qID: { type: GraphQLInt },
     sID: { type: GraphQLInt },
-    questionText: { type: GraphQLString },
-    options: {
-      type: new GraphQLList(OptionType),
+    name: { type: GraphQLString },
+    questions: {
+      type: new GraphQLList(QuestionType),
       resolve: root =>
         new Promise((res, reject) => {
           db.all(
-            'SELECT * FROM Options WHERE qID = ?',
-            root.qID,
+            'SELECT * FROM Questions WHERE sID = ?;',
+            root.sID,
             (err, rows) => {
               if (err) {
                 console.error(err);
@@ -40,4 +39,4 @@ const QuestionType = new GraphQLObjectType({
   },
 });
 
-export default QuestionType;
+export default SurveyType;

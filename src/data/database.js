@@ -13,6 +13,7 @@ function populate() {
   return new Promise(() => {
     // (resolve, reject) //TODO: setja inn resolve og reject
     db.serialize(() => {
+      // Búa til töflur fyrir framenda
       db.run(
         'CREATE TABLE Surveys ( \n' +
           'sID INTEGER PRIMARY KEY AUTOINCREMENT, \n' +
@@ -35,11 +36,26 @@ function populate() {
           'REFERENCES Questions(qID));',
       );
 
+      // Inserta könnun
+      db.run(
+        "INSERT INTO Surveys Values (1, 'Viðhorfskönnun foreldra í knattspyrnu 2018-2019');",
+      );
+      db.run("INSERT INTO Surveys Values (2, 'Survey 2');");
+      // Inserta spurningar
       db.run("INSERT INTO Questions VALUES (1, 'Spurning 1?', 1);");
       db.run("INSERT INTO Questions VALUES (2, 'Spurning 2?', 1);");
       db.run("INSERT INTO Questions VALUES (3, 'Spurning 3?', 1);");
-      db.run("INSERT INTO Questions VALUES (4, 'Spurning 4?', 1);");
-      db.run("INSERT INTO Questions VALUES (5, 'Spurning 5?', 1);");
+      db.run("INSERT INTO Questions VALUES (4, 'Spurning 1?', 2);");
+      // Inserta svör
+      db.run("INSERT INTO Options VALUES (1, 'Svar 1', 1);");
+      db.run("INSERT INTO Options VALUES (2, 'Svar 2', 1);");
+      db.run("INSERT INTO Options VALUES (3, 'Svar 3', 1);");
+      db.run("INSERT INTO Options VALUES (4, 'Svar 1', 2);");
+      db.run("INSERT INTO Options VALUES (5, 'Svar 2', 2);");
+      db.run("INSERT INTO Options VALUES (6, 'Svar 3', 2);");
+      db.run("INSERT INTO Options VALUES (7, 'Svar 1', 3);");
+      db.run("INSERT INTO Options VALUES (8, 'Svar 2', 3);");
+      db.run("INSERT INTO Options VALUES (9, 'Svar 3', 3);");
 
       db.get('SELECT * from Questions;', err => {
         // , rows) => {
