@@ -14,29 +14,62 @@ import s from './Home.css';
 
 class Home extends React.Component {
   static propTypes = {
-    surveys: PropTypes.arrayOf(
-      PropTypes.shape({
-        name: PropTypes.string.isRequired,
-        questions: PropTypes.string.isRequired,
-        map: PropTypes.object,
-      }),
-    ).isRequired,
+    surveys: PropTypes.shape({
+      name: PropTypes.string.isRequired,
+      questions: PropTypes.array.isRequired,
+    }).isRequired,
+    // Of(
+    //   PropTypes.shape({
+    //     name: PropTypes.string,
+    //     questions: PropTypes.string,
+    //     map: PropTypes.object,
+    //   }),
   };
+
+  constructor(props) {
+    super(props);
+
+    this.handelChange = this.handelChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  handelChange(event) {
+    this.setState({
+      [event.target.name]: event.target.value,
+    });
+  }
+
+  handleSubmit(event) {
+    event.preventDefault();
+    return this.state;
+  }
 
   render() {
     // console.log(this.props);
     return (
       <div className={s.root}>
         <div className={s.container}>
-          <h1>{this.props.surveys.name}</h1>
-          {this.props.surveys.questions.map(item => (
-            <div>
-              <h2>{item.questionText}</h2>
-              {item.options.map(item1 => (
-                <h3>{item1.optionText}</h3>
-              ))}
-            </div>
-          ))}
+          <form onSubmit={this.handleSubmit}>
+            <h1>{this.props.surveys.name}</h1>
+            {this.props.surveys.questions.map(item => (
+              <div key={item.questionText}>
+                <h2>{item.questionText}</h2>
+                {item.options.map(item1 => (
+                  <label htmlFor={item1.optionText}>
+                    {item1.optionText}
+                    <input
+                      type="radio"
+                      name={item.questionText}
+                      value={item1.optionText}
+                      id={item1.optionText}
+                      onChange={this.handelChange}
+                    />
+                  </label>
+                ))}
+              </div>
+            ))}
+            <input type="submit" value="Submit" />
+          </form>
         </div>
       </div>
     );
