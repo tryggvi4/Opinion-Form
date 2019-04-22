@@ -11,6 +11,7 @@ import PropTypes from 'prop-types';
 // import withStyles from 'isomorphic-style-loader/lib/withStyles';
 // import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './Home.css';
+// import addAnswer from '../../data/queries/addAnswer';
 
 class Home extends React.Component {
   static propTypes = {
@@ -18,12 +19,6 @@ class Home extends React.Component {
       name: PropTypes.string.isRequired,
       questions: PropTypes.array.isRequired,
     }).isRequired,
-    // Of(
-    //   PropTypes.shape({
-    //     name: PropTypes.string,
-    //     questions: PropTypes.string,
-    //     map: PropTypes.object,
-    //   }),
   };
 
   constructor(props) {
@@ -31,6 +26,7 @@ class Home extends React.Component {
 
     this.handelChange = this.handelChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.addAnswer = this.addAnswer.bind(this);
   }
 
   handelChange(event) {
@@ -41,11 +37,28 @@ class Home extends React.Component {
 
   handleSubmit(event) {
     event.preventDefault();
-    return this.state;
+    const answers = Object.entries(this.state);
+    answers.forEach(ans => {
+      this.addAnswer('demoUser', ans[0], ans[1], 1);
+    });
+    // this.context.router.history.push('/login');
+  }
+
+  async addAnswer(whatUser, questionText, questionAns, sID) {
+    await fetch('/graphql', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
+      body: JSON.stringify({
+        query: `mutation{addAnswer(whatUser:"${whatUser}", questionText:"${questionText}", questionAns:"${questionAns}", sID:${sID}){ whatUser questionText questionAns sID}}`,
+      }),
+    });
   }
 
   render() {
-    // console.log(this.props);
+    // console.log('ER þetta að keyra oft?');
     return (
       <div className={s.root}>
         <div className={s.container}>
@@ -55,7 +68,7 @@ class Home extends React.Component {
               <div key={item.questionText}>
                 <h2>{item.questionText}</h2>
                 {item.options.map(item1 => (
-                  <label htmlFor={item1.optionText}>
+                  <label htmlFor={item1.optionText} key={item1.optionText}>
                     {item1.optionText}
                     <input
                       type="radio"

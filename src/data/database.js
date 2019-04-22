@@ -35,6 +35,27 @@ function populate() {
           'CONSTRAINT fk_Questions FOREIGN KEY (qID) \n' +
           'REFERENCES Questions(qID));',
       );
+      db.run(
+        'CREATE TABLE AnswersWithoutForeignKeys ( \n' +
+          'aID INTEGER PRIMARY KEY AUTOINCREMENT, \n' +
+          'questionText1 VARCHAR, \n' +
+          'questionAns1 VARCHAR, \n' +
+          'questionText2 VARCHAR, \n' +
+          'questionAns2 VARCHAR, \n' +
+          'questionText3 VARCHAR, \n' +
+          'questionAns3 VARCHAR);',
+      );
+
+      db.run(
+        'CREATE TABLE Answers ( \n' +
+        'aID INTEGER PRIMARY KEY AUTOINCREMENT, \n' +
+        'whatUser VARCHAR, \n' + // Mögulega bara Int ID
+        'questionText VARCHAR, \n' + // Mögulega að foreignkeya á spurninga töfluna
+          'questionAns VARCHAR, \n' +
+          'sID INTEGER, \n' +
+          'CONSTRAINT fk_Surveys FOREIGN KEY (sID) \n' +
+          'REFERENCES Surveys(sID));',
+      );
 
       // Inserta könnun
       db.run(
@@ -57,14 +78,28 @@ function populate() {
       db.run("INSERT INTO Options VALUES (8, 'Svar 2', 3);");
       db.run("INSERT INTO Options VALUES (9, 'Svar 3', 3);");
 
-      db.get('SELECT * from Questions;', err => {
-        // , rows) => {
-        if (err) {
-          console.error(err);
-        } else {
-          // console.log(rows);
-        }
-      });
+      db.run(
+        "INSERT INTO AnswersWithoutForeignKeys VALUES (1, 'Spurning1', 'Svar1', 'Spurning2', 'Svar2','Spurning3', 'Svar3');",
+      );
+      db.run(
+        "INSERT INTO AnswersWithoutForeignKeys VALUES (2, 'Spurning1', 'Svar1', 'Spurning2', 'Svar2','Spurning3', 'Svar3');",
+      );
+
+      db.run(
+        "INSERT INTO Answers VALUES (1, 'currentUserDemo', 'Spurning1', 'svar1', 1);",
+      );
+      db.run(
+        "INSERT INTO Answers VALUES (2, 'currentUserDemo', 'Spurning2', 'svar2', 1);",
+      );
+
+      // Test kóði
+      // db.get('SELECT * from Questions;', (err,rows) => {
+      //   if (err) {
+      //     console.error(err);
+      //   } else {
+      //     console.log(rows);
+      //   }
+      // });
     });
   });
 }

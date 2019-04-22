@@ -90,6 +90,8 @@ module.exports = {
 
     'react/forbid-prop-types': 'off',
     'react/destructuring-assignment': 'off',
+
+    'class-methods-use-this': ['error', { exceptMethods: ['addAnswer'] }],
   },
 
   settings: {

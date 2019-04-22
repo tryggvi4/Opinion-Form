@@ -7,11 +7,18 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
-import { GraphQLSchema, GraphQLObjectType, GraphQLString } from 'graphql';
+import {
+  GraphQLSchema,
+  GraphQLObjectType,
+  GraphQLString,
+  GraphQLInt,
+  GraphQLList,
+} from 'graphql';
 
 import SurveyType from './types/SurveyType';
 import QuestionType from './types/QuestionType';
 import OptionType from './types/OptionType';
+import AnswerType from './types/AnswerType';
 
 // import surveys from './queries/surveys';
 import questions from './queries/questions';
@@ -27,11 +34,7 @@ const schema = new GraphQLSchema({
         args: {
           id: { type: GraphQLString },
         },
-        resolve: (
-          // TODO: Setja inní queries/surveys
-          root,
-          args,
-        ) =>
+        resolve: (root, args) =>
           new Promise((res, reject) => {
             db.get(
               'SELECT * FROM Surveys WHERE sID = ?;',
@@ -54,6 +57,76 @@ const schema = new GraphQLSchema({
       options: {
         type: OptionType,
         resolve: options,
+      },
+      answer: {
+        type: AnswerType,
+        args: {
+          id: { type: GraphQLString },
+        },
+        resolve: (root, args) =>
+          new Promise((res, reject) => {
+            db.get(
+              'SELECT * FROM Answers WHERE aID = ?;',
+              args.id,
+              (err, rows) => {
+                if (err) {
+                  console.error(err);
+                  reject(err);
+                } else {
+                  res(rows);
+                }
+              },
+            );
+          }),
+      },
+      answers: {
+        type: new GraphQLList(AnswerType),
+        resolve: () =>
+          new Promise((res, reject) => {
+            db.all('SELECT * FROM Answers;', (err, rows) => {
+              if (err) {
+                console.error(err);
+                reject(err);
+              } else {
+                res(rows);
+              }
+            });
+          }),
+      },
+    },
+  }),
+  mutation: new GraphQLObjectType({
+    name: 'Mutation',
+    fields: {
+      addAnswer: {
+        type: AnswerType,
+        args: {
+          sID: { type: GraphQLInt },
+          whatUser: { type: GraphQLString },
+          questionText: { type: GraphQLString },
+          questionAns: { type: GraphQLString },
+        },
+        resolve: (root, args) => {
+          const prom = new Promise((res, reject) => {
+            // console.log("Keyrir þetta?");
+            db.run(
+              'INSERT INTO Answers(whatUser, questionText, questionAns, sID) VALUES (?, ?, ?, ?);',
+              args.whatUser,
+              args.questionText,
+              args.questionAns,
+              args.sID,
+              (err, rows) => {
+                if (err) {
+                  console.error(err);
+                  reject(err);
+                } else {
+                  res(rows);
+                }
+              },
+            );
+          });
+          return prom; // Fyrir eslint no-new og no-unused-vars regluna
+        },
       },
     },
   }),
