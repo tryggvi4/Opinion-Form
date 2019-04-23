@@ -15,7 +15,7 @@ async function action({ fetch }) {
   const resp = await fetch('/graphql', {
     body: JSON.stringify({
       query:
-        '{surveys(id:"1"){name,questions{questionText,options{optionText}}}}',
+        '{surveys(id:"1"){name,questions{questionText,type,options{optionText}}}}',
     }),
   });
   const { data } = await resp.json();

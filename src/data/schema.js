@@ -25,6 +25,10 @@ import questions from './queries/questions';
 import options from './queries/options';
 import { db } from './database';
 
+// Hérna er meigin uppistaðan af graphql resolv'unum
+// Framendinn notar 'Survey(ID){Questions{Options}}' query
+// Resolvin fyrir questions og options listana er í SurveyType og QuestionType
+// Future work: færa yfir í sér skrár
 const schema = new GraphQLSchema({
   query: new GraphQLObjectType({
     name: 'RootQueryType',
@@ -95,6 +99,8 @@ const schema = new GraphQLSchema({
       },
     },
   }),
+  // Hérna er mutation addAnswer kóðinn
+  // Future work, setja í sér skrá
   mutation: new GraphQLObjectType({
     name: 'Mutation',
     fields: {

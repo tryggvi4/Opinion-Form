@@ -13,6 +13,7 @@ import {
 import QuestionType from './QuestionType';
 import { db } from '../database';
 
+// Býr til GraphQLLista til að sýna allar spurningar sem eru tengdar við þessa könnun
 const SurveyType = new GraphQLObjectType({
   name: 'Survey',
   fields: {

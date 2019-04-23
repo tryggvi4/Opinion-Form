@@ -1,5 +1,6 @@
 const sqlite3 = require('sqlite3').verbose();
 
+// Býr til sqlite3 inmemory gagnagrunn
 const db = new sqlite3.Database(':memory:', err => {
   if (err) {
     return console.error(err.message);
@@ -8,8 +9,16 @@ const db = new sqlite3.Database(':memory:', err => {
   // console.log('Connected to the in-memory SQlite database.');
 });
 
+// Hérna eru 4 töflur
+// 3 halda utan um Könnunina
+// 1 heldur utan um svörin frá notendum
+// Þær tengjsast: Options -> Questions -> Surveys
+// Þannig er hægt að sýna alla valmöguleika sem tengjast spurningu sem tengist könnun
+// Svör eru síðan skráð ein lína fyrir hverja spurningu og línurnar tengjast síðan með whatUser breytunni
+// Tengjst: Answers -> Surveys
+
+// Bý til töflurnar og gögnin í þær
 function populate() {
-  // Búa til töflur og gögn
   return new Promise(() => {
     // (resolve, reject) //TODO: setja inn resolve og reject
     db.serialize(() => {
@@ -23,6 +32,7 @@ function populate() {
         'CREATE TABLE Questions ( \n' +
           'qID INTEGER PRIMARY KEY AUTOINCREMENT, \n' +
           'questionText VARCHAR, \n' +
+          'type VARCHAR, \n' +
           'sID INTEGER, \n' +
           'CONSTRAINT fk_Surveys FOREIGN KEY (sID) \n' +
           'REFERENCES Surveys(sID));',
@@ -36,55 +46,47 @@ function populate() {
           'REFERENCES Questions(qID));',
       );
       db.run(
-        'CREATE TABLE AnswersWithoutForeignKeys ( \n' +
-          'aID INTEGER PRIMARY KEY AUTOINCREMENT, \n' +
-          'questionText1 VARCHAR, \n' +
-          'questionAns1 VARCHAR, \n' +
-          'questionText2 VARCHAR, \n' +
-          'questionAns2 VARCHAR, \n' +
-          'questionText3 VARCHAR, \n' +
-          'questionAns3 VARCHAR);',
-      );
-
-      db.run(
         'CREATE TABLE Answers ( \n' +
         'aID INTEGER PRIMARY KEY AUTOINCREMENT, \n' +
-        'whatUser VARCHAR, \n' + // Mögulega bara Int ID
-        'questionText VARCHAR, \n' + // Mögulega að foreignkeya á spurninga töfluna
+        'whatUser VARCHAR, \n' + // Future work, autogenerate'a unique id fyrir hverja innsendingu
+          'questionText VARCHAR, \n' +
           'questionAns VARCHAR, \n' +
           'sID INTEGER, \n' +
           'CONSTRAINT fk_Surveys FOREIGN KEY (sID) \n' +
           'REFERENCES Surveys(sID));',
+        // Future work, questionText og QuestionAns við töflurnar hér að ofan
       );
-
       // Inserta könnun
       db.run(
-        "INSERT INTO Surveys Values (1, 'Viðhorfskönnun foreldra í knattspyrnu 2018-2019');",
+        "INSERT INTO Surveys (name) Values ('Viðhorfskönnun foreldra í knattspyrnu 2018-2019');",
       );
-      db.run("INSERT INTO Surveys Values (2, 'Survey 2');");
       // Inserta spurningar
-      db.run("INSERT INTO Questions VALUES (1, 'Spurning 1?', 1);");
-      db.run("INSERT INTO Questions VALUES (2, 'Spurning 2?', 1);");
-      db.run("INSERT INTO Questions VALUES (3, 'Spurning 3?', 1);");
-      db.run("INSERT INTO Questions VALUES (4, 'Spurning 1?', 2);");
+      db.run(
+        "INSERT INTO Questions (questionText, type, sID) VALUES ('Ég er ánægð(ur) með þjónustu Vals í heild sinni', 'radio', 1);",
+      );
+      db.run(
+        "INSERT INTO Questions (questionText, type, sID) VALUES ('Þjálfun flokksins í heild sinni er góð', 'radio', 1);",
+      );
+      db.run(
+        "INSERT INTO Questions (questionText, type, sID) VALUES ('Ég er ánægð(ur) með samskipti og upplýsingamiðlun innan flokksins', 'radio', 1);",
+      );
+      // Inserta svarmöguleika
+      db.run("INSERT INTO Options (optionText, qID) VALUES ('1', 1);");
+      db.run("INSERT INTO Options (optionText, qID) VALUES ('2', 1);");
+      db.run("INSERT INTO Options (optionText, qID) VALUES ('3', 1);");
+      db.run("INSERT INTO Options (optionText, qID) VALUES ('4', 1);");
+      db.run("INSERT INTO Options (optionText, qID) VALUES ('5', 1);");
+      db.run("INSERT INTO Options (optionText, qID) VALUES ('1', 2);");
+      db.run("INSERT INTO Options (optionText, qID) VALUES ('2', 2);");
+      db.run("INSERT INTO Options (optionText, qID) VALUES ('3', 2);");
+      db.run("INSERT INTO Options (optionText, qID) VALUES ('4', 2);");
+      db.run("INSERT INTO Options (optionText, qID) VALUES ('5', 2);");
+      db.run("INSERT INTO Options (optionText, qID) VALUES ('1', 3);");
+      db.run("INSERT INTO Options (optionText, qID) VALUES ('2', 3);");
+      db.run("INSERT INTO Options (optionText, qID) VALUES ('3', 3);");
+      db.run("INSERT INTO Options (optionText, qID) VALUES ('4', 3);");
+      db.run("INSERT INTO Options (optionText, qID) VALUES ('5', 3);");
       // Inserta svör
-      db.run("INSERT INTO Options VALUES (1, 'Svar 1', 1);");
-      db.run("INSERT INTO Options VALUES (2, 'Svar 2', 1);");
-      db.run("INSERT INTO Options VALUES (3, 'Svar 3', 1);");
-      db.run("INSERT INTO Options VALUES (4, 'Svar 1', 2);");
-      db.run("INSERT INTO Options VALUES (5, 'Svar 2', 2);");
-      db.run("INSERT INTO Options VALUES (6, 'Svar 3', 2);");
-      db.run("INSERT INTO Options VALUES (7, 'Svar 1', 3);");
-      db.run("INSERT INTO Options VALUES (8, 'Svar 2', 3);");
-      db.run("INSERT INTO Options VALUES (9, 'Svar 3', 3);");
-
-      db.run(
-        "INSERT INTO AnswersWithoutForeignKeys VALUES (1, 'Spurning1', 'Svar1', 'Spurning2', 'Svar2','Spurning3', 'Svar3');",
-      );
-      db.run(
-        "INSERT INTO AnswersWithoutForeignKeys VALUES (2, 'Spurning1', 'Svar1', 'Spurning2', 'Svar2','Spurning3', 'Svar3');",
-      );
-
       db.run(
         "INSERT INTO Answers VALUES (1, 'currentUserDemo', 'Spurning1', 'svar1', 1);",
       );
@@ -93,7 +95,7 @@ function populate() {
       );
 
       // Test kóði
-      // db.get('SELECT * from Questions;', (err,rows) => {
+      // db.get('SELECT * from Answers;', (err,rows) => {
       //   if (err) {
       //     console.error(err);
       //   } else {

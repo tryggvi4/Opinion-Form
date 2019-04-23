@@ -13,11 +13,13 @@ import {
 import OptionType from './OptionType';
 import { db } from '../database';
 
+// Býr til GraphQLLista til að sýna öll svör sem eru tengd við þessa spurningu
 const QuestionType = new GraphQLObjectType({
   name: 'Question',
   fields: {
     qID: { type: GraphQLInt },
     sID: { type: GraphQLInt },
+    type: { type: GraphQLString },
     questionText: { type: GraphQLString },
     options: {
       type: new GraphQLList(OptionType),
